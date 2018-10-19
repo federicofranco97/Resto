@@ -1,14 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package GUI;
 
 import java.awt.Color;
 import java.util.ArrayList;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
+import javax.swing.Timer;
 
 /**
  *
@@ -25,20 +22,48 @@ public class Mesas extends javax.swing.JFrame {
         habilitarMesas();
         setLocationRelativeTo(null);
     }
+    /**
+     * defines all variables
+     */
     //VARIABLES
     ArrayList<JButton> botones= new ArrayList<JButton>();
     ArrayList<MesaTomada> mesasTomadas= new ArrayList<MesaTomada>();
     //VARIABLES
    
+    /**
+     * define funcion 
+     * @param n 
+     */
     //FUNCIONES
+    
+    public void cerrarMesa(){
+        int mesa=Integer.parseInt(JOptionPane.showInputDialog("Ingrese el numero de mesa"));
+        if(buscarMesa(mesa)== -1){
+            JOptionPane.showMessageDialog(null, "La mesa que ingreso no esta ocupada");
+        }else{
+            JOptionPane.showMessageDialog(null, "El total a pagar de la mesa es: "+mesasTomadas.get(buscarMesa(mesa)).getImporte()+"\n"
+                    + "El mesero que los atendio fue: "+mesasTomadas.get(buscarMesa(mesa)).getMesero());
+            mesasTomadas.remove(buscarMesa(mesa));
+            botones.get(mesa-1).setBackground(Color.green);
+        }
+    }
     public void agarrarMesa(int n){
         if(botones.get(n-1).getBackground().equals(Color.green)){
-            JOptionPane.showMessageDialog(null, "La mesa no esta ocupada");
+            JOptionPane.showMessageDialog(null, "La mesa no esta ocupada\n"
+                    + "Seleccione una mesa que este en rojo.");
         }else{
             txtMesero.setText(mesasTomadas.get(buscarMesa(n)).getMesero());
             txtCuenta.setText(""+mesasTomadas.get(buscarMesa(n)).getImporte());
             txtMesa.setText(""+mesasTomadas.get(buscarMesa(n)).getNumeroMesa());
             
+            Timer timer = new Timer(3500,null);
+            timer.addActionListener((e)-> {
+                txtMesero.setText("");
+                txtCuenta.setText("");
+                txtMesa.setText("");
+                timer.stop();
+            });
+            timer.start();
         }
     }
     
@@ -66,16 +91,30 @@ public class Mesas extends javax.swing.JFrame {
         }//fin for
         
         if(existe){
-            plata=Double.parseDouble(JOptionPane.showInputDialog("Ingrese el importe a agregar"));
-            mesasTomadas.get(posi).setImporte(plata+mesasTomadas.get(posi).getImporte());
-            JOptionPane.showMessageDialog(null, "Cuenta actualizada con exito");
+            int dec=Integer.parseInt(JOptionPane.showInputDialog("Escriba 1 para sumar dinero a la cuenta\n"
+                    + "Escriba 2 para restar dinero a la cuenta"));
+            if(dec==1){
+                plata=Double.parseDouble(JOptionPane.showInputDialog("Ingrese el importe a modificar"));
+                mesasTomadas.get(posi).setImporte(plata+mesasTomadas.get(posi).getImporte());
+                JOptionPane.showMessageDialog(null, "Cuenta actualizada con exito");
+            }
+            if(dec==2){
+                plata=Double.parseDouble(JOptionPane.showInputDialog("Ingrese el importe a modificar"));
+                mesasTomadas.get(posi).setImporte(mesasTomadas.get(posi).getImporte()-plata);
+                JOptionPane.showMessageDialog(null, "Cuenta actualizada con exito");
+            }
+            if(dec<1 || dec>2){
+                JOptionPane.showMessageDialog(null, "La opcion ingresada no es valida.");
+            }
+            
+            
         }else{
             JOptionPane.showMessageDialog(null, "La mesa no esta tomada.");
         }
         
     }
     public void TomarMesa(){
-        int mesa=Integer.parseInt(JOptionPane.showInputDialog("Ingrese el numero de mesa"));
+        int mesa=Integer.parseInt(JOptionPane.showInputDialog("Ingrese el numero de mesa\n "));
         if(mesa<1 || mesa>20){
             JOptionPane.showMessageDialog(null, "La mesa no existe");
             return;
@@ -87,8 +126,8 @@ public class Mesas extends javax.swing.JFrame {
                 return;
             }
         }
-        String mesero=JOptionPane.showInputDialog("Ingrese el nombre del mesero");
-        double cuenta=Double.parseDouble(JOptionPane.showInputDialog("Ingrese el importe a pagar de la mesa"));
+        String mesero=JOptionPane.showInputDialog("Ingrese el nombre del mesero\n ");
+        double cuenta=Double.parseDouble(JOptionPane.showInputDialog("Ingrese el importe a pagar de la mesa\n "));
         mesasTomadas.add(new MesaTomada(mesa,mesero,cuenta));
         JOptionPane.showMessageDialog(null, "Mesa agregada con exito");
         int posiMesa= mesa-1;
@@ -159,6 +198,7 @@ public class Mesas extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         txtMesa = new javax.swing.JTextField();
         jButton3 = new javax.swing.JButton();
+        jButton4 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Planta Baja");
@@ -167,7 +207,8 @@ public class Mesas extends javax.swing.JFrame {
 
         jPanel1.setBackground(new java.awt.Color(0, 0, 0));
 
-        jButton1.setForeground(new java.awt.Color(0, 0, 0));
+        jButton1.setBackground(new java.awt.Color(0, 0, 0));
+        jButton1.setForeground(new java.awt.Color(255, 255, 255));
         jButton1.setText("Tomar Mesa");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -175,7 +216,8 @@ public class Mesas extends javax.swing.JFrame {
             }
         });
 
-        btnAgregar.setForeground(new java.awt.Color(0, 0, 0));
+        btnAgregar.setBackground(new java.awt.Color(0, 0, 0));
+        btnAgregar.setForeground(new java.awt.Color(255, 255, 255));
         btnAgregar.setText("Modificar Cuenta");
         btnAgregar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -183,7 +225,8 @@ public class Mesas extends javax.swing.JFrame {
             }
         });
 
-        jButton2.setForeground(new java.awt.Color(0, 0, 0));
+        jButton2.setBackground(new java.awt.Color(0, 0, 0));
+        jButton2.setForeground(new java.awt.Color(255, 255, 255));
         jButton2.setText("Salir");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -379,6 +422,15 @@ public class Mesas extends javax.swing.JFrame {
             }
         });
 
+        jButton4.setBackground(new java.awt.Color(0, 0, 0));
+        jButton4.setForeground(new java.awt.Color(255, 255, 255));
+        jButton4.setText("Cerrar Mesa");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -386,12 +438,6 @@ public class Mesas extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(42, 42, 42)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnAgregar, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                         .addComponent(jButton3)
                         .addGroup(jPanel1Layout.createSequentialGroup()
@@ -452,7 +498,15 @@ public class Mesas extends javax.swing.JFrame {
                                         .addGroup(jPanel1Layout.createSequentialGroup()
                                             .addComponent(jLabel3)
                                             .addGap(34, 34, 34)
-                                            .addComponent(txtMesa, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE))))))))
+                                            .addComponent(txtMesa, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)))))))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnAgregar, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(31, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -512,8 +566,9 @@ public class Mesas extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnAgregar)
                     .addComponent(jButton1)
+                    .addComponent(jButton4)
                     .addComponent(jButton2))
-                .addContainerGap(102, Short.MAX_VALUE))
+                .addGap(18, 102, Short.MAX_VALUE))
         );
 
         getContentPane().add(jPanel1);
@@ -622,6 +677,10 @@ public class Mesas extends javax.swing.JFrame {
                 + "Puede agregarle precio a una mesa que este ocupada\n");
     }//GEN-LAST:event_jButton3ActionPerformed
 
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        cerrarMesa();
+    }//GEN-LAST:event_jButton4ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -662,6 +721,7 @@ public class Mesas extends javax.swing.JFrame {
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
